@@ -19,12 +19,14 @@ class ExchangeInterface:
         """Initialize exchange connection"""
         try:
             exchange_class = getattr(ccxt, Config.EXCHANGE)
-            exchange = exchange_class({
-                'apiKey': Config.API_KEY,
-                'secret': Config.API_SECRET,
+            params = {
                 'enableRateLimit': True,
                 'options': {'defaultType': 'spot'}
-            })
+            }
+            if not Config.PAPER_TRADING:
+                params['apiKey'] = Config.API_KEY
+                params['secret'] = Config.API_SECRET
+            exchange = exchange_class(params)
 
             if Config.PAPER_TRADING:
                 logger.info("Exchange initialized in PAPER TRADING mode (simulated execution)")
