@@ -23,6 +23,7 @@ class DataFetcher:
             exchange_class = getattr(ccxt, Config.EXCHANGE)
             params = {
                 'enableRateLimit': True,
+                'timeout': 10000,
                 'options': {'defaultType': 'spot'}
             }
             if not Config.PAPER_TRADING:
@@ -56,7 +57,7 @@ class DataFetcher:
 
             self.cache[cache_key] = df
 
-            await self._save_to_database(symbol, timeframe, df)
+            asyncio.create_task(self._save_to_database(symbol, timeframe, df))
 
             logger.debug(f"Fetched {len(df)} candles for {symbol} {timeframe}")
             return df

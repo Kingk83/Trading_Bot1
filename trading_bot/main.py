@@ -98,7 +98,11 @@ class TradingBot:
     async def _process_symbol(self, symbol: str):
         """Process trading signals for a symbol"""
         try:
-            df = await self.data_fetcher.fetch_ohlcv(symbol, Config.TIMEFRAME, Config.LOOKBACK_PERIODS)
+            logger.info(f"Scanning {symbol} on {Config.TIMEFRAME}...")
+            df = await asyncio.wait_for(
+                self.data_fetcher.fetch_ohlcv(symbol, Config.TIMEFRAME, Config.LOOKBACK_PERIODS),
+                timeout=15
+            )
 
             if df is None or len(df) < 100:
                 return
