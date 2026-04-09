@@ -55,14 +55,26 @@ class ExchangeInterface:
         self._paper_orders[order_id] = order
         return order
 
-    async def _get_current_price(self, symbol: str) -> float:
+    _API_TIMEOUT = 30
+
+    async def _with_timeout(self, coro):
+        return await asyncio.wait_for(coro, timeout=self._API_TIMEOUT)
+
+    async def _get_current_price(self, symbol: str) -> Optional[float]:
         """Get current market price"""
         try:
-            ticker = await asyncio.to_thread(self.exchange.fetch_ticker, symbol)
-            return ticker['last'] or ticker['close'] or 0.0
+            ticker = await self._with_timeout(asyncio.to_thread(self.exchange.fetch_ticker, symbol))
+            price = ticker.get('last') or ticker.get('close')
+            if not price or price <= 0:
+                logger.error(f"Invalid price received for {symbol}: {price}")
+                return None
+            return float(price)
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout fetching price for {symbol}")
+            return None
         except Exception as e:
             logger.error(f"Error fetching price for {symbol}: {e}")
-            return 0.0
+            return None
 
     async def place_market_order(self, symbol: str, side: str, quantity: float) -> Optional[Dict]:
         """Place market order"""
@@ -71,17 +83,23 @@ class ExchangeInterface:
 
             if Config.PAPER_TRADING:
                 current_price = await self._get_current_price(symbol)
+                if current_price is None:
+                    logger.error(f"Cannot place paper order for {symbol}: price unavailable")
+                    return None
                 order = self._simulate_order(symbol, side, quantity, current_price)
                 logger.info(f"Paper order simulated: {order['id']} @ ${current_price:.4f}")
                 return order
 
-            order = await asyncio.to_thread(
+            order = await self._with_timeout(asyncio.to_thread(
                 self.exchange.create_market_order,
                 symbol, side, quantity
-            )
+            ))
             logger.info(f"Order executed: {order['id']}")
             return order
 
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout placing market order for {symbol}")
+            return None
         except Exception as e:
             logger.error(f"Error placing market order: {e}")
             return None
@@ -95,13 +113,16 @@ class ExchangeInterface:
                 order = self._simulate_order(symbol, side, quantity, price)
                 return order
 
-            order = await asyncio.to_thread(
+            order = await self._with_timeout(asyncio.to_thread(
                 self.exchange.create_limit_order,
                 symbol, side, quantity, price
-            )
+            ))
             logger.info(f"Limit order placed: {order['id']}")
             return order
 
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout placing limit order for {symbol}")
+            return None
         except Exception as e:
             logger.error(f"Error placing limit order: {e}")
             return None
@@ -115,14 +136,17 @@ class ExchangeInterface:
                 order = self._simulate_order(symbol, order_side, quantity, stop_price)
                 return order
 
-            order = await asyncio.to_thread(
+            order = await self._with_timeout(asyncio.to_thread(
                 self.exchange.create_order,
                 symbol, 'stop_market', order_side, quantity,
                 None, {'stopPrice': stop_price}
-            )
+            ))
             logger.info(f"Stop loss order placed: {order['id']}")
             return order
 
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout placing stop loss order for {symbol}")
+            return None
         except Exception as e:
             logger.error(f"Error placing stop loss order: {e}")
             return None
@@ -134,9 +158,12 @@ class ExchangeInterface:
                 self._paper_orders.pop(order_id, None)
                 return True
 
-            await asyncio.to_thread(self.exchange.cancel_order, order_id, symbol)
+            await self._with_timeout(asyncio.to_thread(self.exchange.cancel_order, order_id, symbol))
             logger.info(f"Order cancelled: {order_id}")
             return True
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout cancelling order {order_id}")
+            return False
         except Exception as e:
             logger.error(f"Error cancelling order: {e}")
             return False
@@ -147,8 +174,11 @@ class ExchangeInterface:
             if Config.PAPER_TRADING:
                 return self._paper_orders.get(order_id)
 
-            order = await asyncio.to_thread(self.exchange.fetch_order, order_id, symbol)
+            order = await self._with_timeout(asyncio.to_thread(self.exchange.fetch_order, order_id, symbol))
             return order
+        except asyncio.TimeoutError:
+            logger.error(f"Timeout fetching order status for {order_id}")
+            return None
         except Exception as e:
             logger.error(f"Error fetching order status: {e}")
             return None
@@ -159,8 +189,11 @@ class ExchangeInterface:
             if Config.PAPER_TRADING:
                 return {'USDT': {'free': Config.INITIAL_CAPITAL, 'total': Config.INITIAL_CAPITAL}}
 
-            balance = await asyncio.to_thread(self.exchange.fetch_balance)
+            balance = await self._with_timeout(asyncio.to_thread(self.exchange.fetch_balance))
             return balance
+        except asyncio.TimeoutError:
+            logger.error("Timeout fetching account balance")
+            return None
         except Exception as e:
             logger.error(f"Error fetching balance: {e}")
             return None
@@ -171,8 +204,11 @@ class ExchangeInterface:
             if Config.PAPER_TRADING:
                 return []
 
-            positions = await asyncio.to_thread(self.exchange.fetch_positions)
+            positions = await self._with_timeout(asyncio.to_thread(self.exchange.fetch_positions))
             return [p for p in positions if float(p.get('contracts', 0)) > 0]
+        except asyncio.TimeoutError:
+            logger.error("Timeout fetching positions")
+            return None
         except Exception as e:
             logger.error(f"Error fetching positions: {e}")
             return None

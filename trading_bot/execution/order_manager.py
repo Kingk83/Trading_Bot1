@@ -48,11 +48,31 @@ class OrderManager:
                 logger.error("Order execution failed")
                 return None
 
+            actual_entry_price = order['average'] if order.get('average') else entry_price
+
+            if stop_loss:
+                stop_order = await self.exchange.place_stop_loss_order(
+                    symbol=symbol,
+                    side='long' if side == 'buy' else 'short',
+                    quantity=position_size['quantity'],
+                    stop_price=stop_loss
+                )
+                if not stop_order:
+                    logger.error(f"Stop loss order failed for {symbol} after entry filled - attempting to close entry position")
+                    close_side = 'sell' if side == 'buy' else 'buy'
+                    await self.exchange.place_market_order(
+                        symbol=symbol,
+                        side=close_side,
+                        quantity=position_size['quantity']
+                    )
+                    return None
+                logger.info(f"Stop loss order confirmed: {stop_order['id']} @ {stop_loss}")
+
             trade_data = {
                 'strategy_id': strategy_id,
                 'symbol': order['symbol'],
                 'side': side,
-                'entry_price': order['average'] if order.get('average') else entry_price,
+                'entry_price': actual_entry_price,
                 'quantity': position_size['quantity'],
                 'entry_time': datetime.now().isoformat(),
                 'status': 'open',
