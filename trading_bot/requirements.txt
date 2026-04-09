@@ -3,7 +3,7 @@ pandas>=2.2.0
 numpy>=1.26.4
 python-dotenv==1.0.0
 websockets==12.0
-supabase==2.3.4
+supabase==2.4.6
 ta==0.11.0
 scikit-learn==1.4.0
 scipy==1.12.0

@@ -62,7 +62,7 @@ async def initialize_strategies():
 
     for strategy in strategies:
         try:
-            result = db.client.table("strategies").upsert(strategy, on_conflict='name').execute()
+            result = db.client.table("strategies").upsert(strategy, ignore_duplicates=False).execute()
             print(f"✓ Initialized: {strategy['name']}")
         except Exception as e:
             print(f"✗ Error initializing {strategy['name']}: {e}")

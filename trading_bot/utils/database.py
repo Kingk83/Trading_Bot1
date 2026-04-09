@@ -129,7 +129,7 @@ class DatabaseManager:
     async def save_market_data(self, candles: List[Dict[str, Any]]) -> bool:
         """Save market data candles"""
         try:
-            self.client.table("market_data").upsert(candles, on_conflict="symbol,timeframe,timestamp").execute()
+            self.client.table("market_data").upsert(candles, ignore_duplicates=True).execute()
             return True
         except Exception as e:
             logger.error(f"Error saving market data: {e}")
