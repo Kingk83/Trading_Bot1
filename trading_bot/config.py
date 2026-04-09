@@ -24,7 +24,7 @@ class Config:
     MAX_OPEN_POSITIONS = int(os.getenv("MAX_OPEN_POSITIONS", "5"))
     MIN_RISK_REWARD_RATIO = float(os.getenv("MIN_RISK_REWARD_RATIO", "2.0"))
 
-    INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "10000"))
+    INITIAL_CAPITAL = float(os.getenv("INITIAL_CAPITAL", "45"))
     MIN_POSITION_VALUE = float(os.getenv("MIN_POSITION_VALUE", "5.0"))
 
     DEFAULT_SYMBOLS = [
@@ -33,12 +33,22 @@ class Config:
         "XLM/USDC",
         "ADA/USDC",
         "DOGE/USDC",
+        "BTC/USDC",
+        "ETH/USDC",
+        "BNB/USDC",
+        "AVAX/USDC",
+        "MATIC/USDC",
+        "LINK/USDC",
+        "LTC/USDC",
+        "ATOM/USDC",
+        "UNI/USDC",
+        "DOT/USDC",
     ]
-    TRADING_SYMBOLS = os.getenv("TRADING_SYMBOLS", "XRP/USDC,SOL/USDC,XLM/USDC,ADA/USDC,DOGE/USDC").split(",")
+    TRADING_SYMBOLS = os.getenv("TRADING_SYMBOLS", "XRP/USDC,SOL/USDC,XLM/USDC,ADA/USDC,DOGE/USDC,BTC/USDC,ETH/USDC,BNB/USDC,AVAX/USDC,MATIC/USDC,LINK/USDC,LTC/USDC,ATOM/USDC,UNI/USDC,DOT/USDC").split(",")
 
     TIMEFRAMES = ["1m", "5m", "15m", "1h", "4h", "1d"]
-    PRIMARY_TIMEFRAME = "15m"
-    TIMEFRAME = os.getenv("TIMEFRAME", "15m")
+    PRIMARY_TIMEFRAME = "5m"
+    TIMEFRAME = os.getenv("TIMEFRAME", "5m")
     LOOKBACK_PERIODS = int(os.getenv("LOOKBACK_PERIODS", "500"))
 
     SCAN_INTERVAL = int(os.getenv("SCAN_INTERVAL", "60"))
