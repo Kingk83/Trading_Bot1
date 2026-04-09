@@ -39,6 +39,11 @@ class TradingBot:
         self.order_manager = OrderManager(self.risk_manager, self.position_sizer)
 
         self.strategies = self._initialize_strategies()
+        self.strategy_type_map = {
+            'TrendFollowing': 'trend_following',
+            'MeanReversion': 'mean_reversion',
+            'Breakout': 'breakout',
+        }
         self.regime_detector = RegimeDetector()
         self.mtf_analyzer = MultiTimeframeAnalyzer(['15m', '1h', '4h'])
 
@@ -112,14 +117,15 @@ class TradingBot:
             regime = self.regime_detector.detect_regime(df)
             regime_chars = self.regime_detector.get_regime_characteristics(regime)
 
-            logger.debug(f"{symbol} | Regime: {regime} | Best strategies: {regime_chars['best_strategies']}")
+            logger.info(f"{symbol} | Regime: {regime} | Best strategies: {regime_chars['best_strategies']}")
 
             for strategy in self.strategies:
                 if not await self._is_strategy_enabled(strategy.name):
                     continue
 
-                if not self.regime_detector.should_trade_in_regime(regime, strategy.name.lower()):
-                    logger.debug(f"Skipping {strategy.name} - not suitable for {regime} regime")
+                strategy_type = self.strategy_type_map.get(strategy.name, strategy.name.lower())
+                if not self.regime_detector.should_trade_in_regime(regime, strategy_type):
+                    logger.info(f"Skipping {strategy.name} ({strategy_type}) - not suitable for {regime} regime")
                     continue
 
                 if not self.risk_manager.is_trading_allowed():
