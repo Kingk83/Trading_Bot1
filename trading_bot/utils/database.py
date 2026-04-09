@@ -92,8 +92,8 @@ class DatabaseManager:
     async def get_strategy(self, strategy_name: str) -> Optional[Dict]:
         """Get strategy configuration"""
         try:
-            result = self.client.table("strategies").select("*").eq("name", strategy_name).maybeSingle().execute()
-            return result.data
+            result = self.client.table("strategies").select("*").eq("name", strategy_name).limit(1).execute()
+            return result.data[0] if result.data else None
         except Exception as e:
             logger.error(f"Error fetching strategy: {e}")
             return None
@@ -120,8 +120,8 @@ class DatabaseManager:
     async def get_system_config(self, key: str) -> Any:
         """Get system configuration value"""
         try:
-            result = self.client.table("system_config").select("value").eq("key", key).maybeSingle().execute()
-            return result.data['value'] if result.data else None
+            result = self.client.table("system_config").select("value").eq("key", key).limit(1).execute()
+            return result.data[0]['value'] if result.data else None
         except Exception as e:
             logger.error(f"Error fetching config: {e}")
             return None
@@ -129,7 +129,7 @@ class DatabaseManager:
     async def save_market_data(self, candles: List[Dict[str, Any]]) -> bool:
         """Save market data candles"""
         try:
-            self.client.table("market_data").upsert(candles).execute()
+            self.client.table("market_data").upsert(candles, on_conflict="symbol,timeframe,timestamp").execute()
             return True
         except Exception as e:
             logger.error(f"Error saving market data: {e}")
