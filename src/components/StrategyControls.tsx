@@ -92,8 +92,8 @@ export default function StrategyControls() {
                 <div className="flex items-center space-x-4">
                   <div className={`w-3 h-3 rounded-full ${strategy.enabled ? 'bg-green-500' : 'bg-slate-300'}`} />
                   <div>
-                    <h3 className="font-semibold text-slate-900">{strategy.name}</h3>
-                    <p className="text-sm text-slate-500 capitalize">{strategy.type.replace('_', ' ')}</p>
+                    <h3 className="font-semibold text-slate-900">{strategy.name.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                    <p className="text-sm text-slate-500 capitalize">{strategy.type.replace(/_/g, ' ')}</p>
                   </div>
                 </div>
 
