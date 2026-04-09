@@ -13,6 +13,7 @@ function buildSafePublicDir() {
   if (!fs.existsSync(publicDir)) return;
   const files = fs.readdirSync(publicDir);
   files.forEach(file => {
+    if (file.includes(' ')) return;
     const src = path.join(publicDir, file);
     const dest = path.join(safePublicDir, file);
     try {

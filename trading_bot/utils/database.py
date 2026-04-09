@@ -27,14 +27,19 @@ class DatabaseManager:
         resp.raise_for_status()
         return resp.json()
 
-    def _post(self, table: str, data: Any, upsert: bool = False, ignore_duplicates: bool = False) -> List[Dict]:
+    def _post(self, table: str, data: Any, upsert: bool = False, ignore_duplicates: bool = False, on_conflict: str = None) -> List[Dict]:
         headers = dict(self._headers)
+        params = {}
         if upsert:
             prefer = "return=representation,resolution=merge-duplicates"
             if ignore_duplicates:
                 prefer = "return=representation,resolution=ignore-duplicates"
             headers["Prefer"] = prefer
-        resp = requests.post(f"{self._base_url}/{table}", headers=headers, json=data)
+            if on_conflict:
+                params["on_conflict"] = on_conflict
+        resp = requests.post(f"{self._base_url}/{table}", headers=headers, json=data, params=params if params else None)
+        if resp.status_code == 409 and ignore_duplicates:
+            return []
         resp.raise_for_status()
         return resp.json() if resp.text else []
 
@@ -152,7 +157,7 @@ class DatabaseManager:
 
     async def save_market_data(self, candles: List[Dict[str, Any]]) -> bool:
         try:
-            self._post("market_data", candles, upsert=True, ignore_duplicates=True)
+            self._post("market_data", candles, upsert=True, ignore_duplicates=True, on_conflict="symbol,timeframe,timestamp")
             return True
         except Exception as e:
             logger.error(f"Error saving market data: {e}")
