@@ -23,7 +23,7 @@ class DataFetcher:
             exchange_class = getattr(ccxt, Config.EXCHANGE)
             params = {
                 'enableRateLimit': True,
-                'timeout': 10000,
+                'timeout': 30000,
                 'options': {'defaultType': 'spot'}
             }
             if not Config.PAPER_TRADING:

@@ -28,23 +28,18 @@ class Config:
     MIN_POSITION_VALUE = float(os.getenv("MIN_POSITION_VALUE", "5.0"))
 
     DEFAULT_SYMBOLS = [
-        "XRP/USDC",
-        "SOL/USDC",
-        "XLM/USDC",
-        "ADA/USDC",
-        "DOGE/USDC",
-        "BTC/USDC",
-        "ETH/USDC",
-        "BNB/USDC",
-        "AVAX/USDC",
-        "MATIC/USDC",
-        "LINK/USDC",
-        "LTC/USDC",
-        "ATOM/USDC",
-        "UNI/USDC",
-        "DOT/USDC",
+        "BTC/USDT",
+        "ETH/USDT",
+        "XRP/USDT",
+        "SOL/USDT",
+        "BNB/USDT",
+        "ADA/USDT",
+        "DOGE/USDT",
+        "AVAX/USDT",
+        "LINK/USDT",
+        "LTC/USDT",
     ]
-    TRADING_SYMBOLS = os.getenv("TRADING_SYMBOLS", "XRP/USDC,SOL/USDC,XLM/USDC,ADA/USDC,DOGE/USDC,BTC/USDC,ETH/USDC,BNB/USDC,AVAX/USDC,MATIC/USDC,LINK/USDC,LTC/USDC,ATOM/USDC,UNI/USDC,DOT/USDC").split(",")
+    TRADING_SYMBOLS = os.getenv("TRADING_SYMBOLS", "BTC/USDT,ETH/USDT,XRP/USDT,SOL/USDT,BNB/USDT,ADA/USDT,DOGE/USDT,AVAX/USDT,LINK/USDT,LTC/USDT").split(",")
 
     TIMEFRAMES = ["1m", "5m", "15m", "1h", "4h", "1d"]
     PRIMARY_TIMEFRAME = "5m"

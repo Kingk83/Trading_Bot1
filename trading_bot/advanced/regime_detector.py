@@ -133,11 +133,11 @@ class RegimeDetector:
     def should_trade_in_regime(regime: str, strategy_type: str) -> bool:
         """Determine if strategy should trade in current regime"""
         regime_strategy_map = {
-            "strong_uptrend": ["trend_following", "breakout"],
-            "weak_uptrend": ["trend_following", "breakout"],
-            "ranging": ["mean_reversion"],
-            "weak_downtrend": ["mean_reversion"],
-            "strong_downtrend": []
+            "strong_uptrend": ["trend_following", "breakout", "mean_reversion"],
+            "weak_uptrend": ["trend_following", "breakout", "mean_reversion"],
+            "ranging": ["mean_reversion", "breakout"],
+            "weak_downtrend": ["mean_reversion", "trend_following"],
+            "strong_downtrend": ["mean_reversion"]
         }
 
         allowed_strategies = regime_strategy_map.get(regime, [])

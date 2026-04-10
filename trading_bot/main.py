@@ -106,10 +106,10 @@ class TradingBot:
             logger.info(f"Scanning {symbol} on {Config.TIMEFRAME}...")
             df = await asyncio.wait_for(
                 self.data_fetcher.fetch_ohlcv(symbol, Config.TIMEFRAME, Config.LOOKBACK_PERIODS),
-                timeout=15
+                timeout=30
             )
 
-            if df is None or len(df) < 100:
+            if df is None or df.empty or len(df) < 100:
                 return
 
             df = DataProcessor.clean_data(df)
