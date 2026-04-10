@@ -12,6 +12,13 @@ function buildSafePublicDir() {
   const publicDir = path.resolve(__dirname, 'public');
   if (!fs.existsSync(publicDir)) return;
   const files = fs.readdirSync(publicDir);
+  const existing = fs.readdirSync(safePublicDir);
+  existing.forEach(file => {
+    if (file.includes(' ')) {
+      try { fs.unlinkSync(path.join(safePublicDir, file)); } catch { /* skip */ }
+    }
+  });
+
   files.forEach(file => {
     if (file.includes(' ')) return;
     const src = path.join(publicDir, file);

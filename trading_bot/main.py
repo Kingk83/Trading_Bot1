@@ -8,19 +8,19 @@ import pandas as pd
 from datetime import datetime
 from typing import List, Dict
 
-from config import Config
-from data.data_fetcher import DataFetcher
-from data.data_processor import DataProcessor
-from strategies.trend_following import TrendFollowingStrategy
-from strategies.mean_reversion import MeanReversionStrategy
-from strategies.breakout import BreakoutStrategy
-from execution.order_manager import OrderManager
-from risk.risk_manager import RiskManager
-from risk.position_sizer import PositionSizer
-from advanced.regime_detector import RegimeDetector
-from advanced.multi_timeframe import MultiTimeframeAnalyzer
-from utils.database import db
-from utils.logger import logger
+from .config import Config
+from .data.data_fetcher import DataFetcher
+from .data.data_processor import DataProcessor
+from .strategies.trend_following import TrendFollowingStrategy
+from .strategies.mean_reversion import MeanReversionStrategy
+from .strategies.breakout import BreakoutStrategy
+from .execution.order_manager import OrderManager
+from .risk.risk_manager import RiskManager
+from .risk.position_sizer import PositionSizer
+from .advanced.regime_detector import RegimeDetector
+from .advanced.multi_timeframe import MultiTimeframeAnalyzer
+from .utils.database import db
+from .utils.logger import logger
 
 class TradingBot:
     """
@@ -190,7 +190,7 @@ class TradingBot:
 
     async def run_backtest(self, symbol: str, start_date: str, end_date: str):
         """Run backtest on historical data"""
-        from backtesting.backtest_engine import BacktestEngine
+        from .backtesting.backtest_engine import BacktestEngine
 
         logger.info(f"\nRunning backtest: {symbol} from {start_date} to {end_date}")
 
