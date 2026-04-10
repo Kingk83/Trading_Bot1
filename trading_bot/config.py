@@ -10,8 +10,8 @@ from typing import Dict, Any
 load_dotenv()
 
 class Config:
-    SUPABASE_URL = os.getenv("VITE_SUPABASE_URL", "")
-    SUPABASE_KEY = os.getenv("VITE_SUPABASE_ANON_KEY", "")
+    SUPABASE_URL = os.getenv("SUPABASE_URL") or os.getenv("VITE_SUPABASE_URL", "")
+    SUPABASE_KEY = os.getenv("SUPABASE_ANON_KEY") or os.getenv("VITE_SUPABASE_ANON_KEY", "")
 
     EXCHANGE = os.getenv("EXCHANGE", "binance")
     API_KEY = os.getenv("EXCHANGE_API_KEY", "")

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TrendingUp, TrendingDown, Activity, DollarSign } from 'lucide-react';
+import { TrendingUp, TrendingDown, Activity, DollarSign, ServerCrash } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface MetricCardProps {
@@ -48,6 +48,7 @@ export default function Dashboard() {
 
   const [positions, setPositions] = useState<any[]>([]);
   const [recentTrades, setRecentTrades] = useState<any[]>([]);
+  const [hasData, setHasData] = useState<boolean | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -73,6 +74,10 @@ export default function Dashboard() {
       .limit(1)
       .maybeSingle();
 
+    const tradeCount = trades?.length ?? 0;
+    const positionCount = positionsData?.length ?? 0;
+    setHasData(tradeCount > 0 || positionCount > 0);
+
     if (trades) {
       const totalPnL = trades.reduce((sum, t) => sum + (t.pnl || 0), 0);
       const closedTrades = trades.filter(t => t.status === 'closed');
@@ -97,6 +102,20 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {hasData === false && (
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-5 flex items-start gap-4">
+          <ServerCrash className="w-5 h-5 text-amber-500 mt-0.5 shrink-0" />
+          <div>
+            <p className="font-semibold text-amber-800">Waiting for the trading bot</p>
+            <p className="text-sm text-amber-700 mt-1">
+              No trade data has been received yet. Make sure the bot is deployed on Railway with the
+              correct environment variables: <code className="font-mono bg-amber-100 px-1 rounded">VITE_SUPABASE_URL</code> and{' '}
+              <code className="font-mono bg-amber-100 px-1 rounded">VITE_SUPABASE_ANON_KEY</code>.
+              The dashboard will update automatically once the bot starts trading.
+            </p>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <MetricCard
           title="Total P&L"

@@ -17,11 +17,36 @@ const tabs = [
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [botActive, setBotActive] = useState<boolean | null>(null);
 
   useEffect(() => {
+    const checkBotActivity = async () => {
+      const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+      const { data } = await supabase
+        .from('trades')
+        .select('entry_time')
+        .gte('entry_time', fiveMinutesAgo)
+        .limit(1);
+      const { data: positions } = await supabase
+        .from('positions')
+        .select('id')
+        .limit(1);
+      const { count } = await supabase
+        .from('trades')
+        .select('*', { count: 'exact', head: true });
+      setBotActive((count ?? 0) > 0 || (positions?.length ?? 0) > 0 || (data?.length ?? 0) > 0);
+    };
+
+    checkBotActivity();
+
     const channel = supabase
       .channel('trading_updates')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'trades' }, () => {})
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'trades' }, () => {
+        setBotActive(true);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'positions' }, () => {
+        setBotActive(true);
+      })
       .subscribe();
 
     return () => {
@@ -45,8 +70,16 @@ function App() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-slate-600">Paper Trading</span>
+              {botActive === null ? (
+                <div className="w-2 h-2 bg-slate-300 rounded-full" />
+              ) : botActive ? (
+                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+              ) : (
+                <div className="w-2 h-2 bg-amber-400 rounded-full" />
+              )}
+              <span className="text-sm font-medium text-slate-600">
+                {botActive === null ? 'Connecting...' : botActive ? 'Bot Active' : 'Awaiting Bot'}
+              </span>
             </div>
           </div>
 
