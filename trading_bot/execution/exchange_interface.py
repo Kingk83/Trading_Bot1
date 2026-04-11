@@ -7,8 +7,8 @@ import asyncio
 import uuid
 import ccxt
 from typing import Dict, Optional
-from config import Config
-from utils.logger import logger
+from ..config import Config
+from ..utils.logger import logger
 
 class ExchangeInterface:
     def __init__(self):

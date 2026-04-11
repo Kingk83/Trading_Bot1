@@ -7,9 +7,9 @@ import pandas as pd
 import numpy as np
 from typing import Dict, List, Tuple
 from datetime import datetime, timedelta
-from backtesting.backtest_engine import BacktestEngine
-from strategies.base_strategy import BaseStrategy
-from utils.logger import logger
+from ..backtesting.backtest_engine import BacktestEngine
+from ..strategies.base_strategy import BaseStrategy
+from ..utils.logger import logger
 
 class StrategyOptimizer:
     """

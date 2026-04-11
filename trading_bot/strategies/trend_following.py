@@ -6,8 +6,8 @@ Enters on trend confirmation, exits on reversal or targets
 
 import pandas as pd
 from typing import Optional, Dict
-from strategies.base_strategy import BaseStrategy, Signal, SignalType
-from utils.indicators import Indicators
+from .base_strategy import BaseStrategy, Signal, SignalType
+from ..utils.indicators import Indicators
 
 class TrendFollowingStrategy(BaseStrategy):
     """

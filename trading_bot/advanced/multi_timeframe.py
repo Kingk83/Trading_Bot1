@@ -5,8 +5,8 @@ Analyze multiple timeframes for confluence
 
 import pandas as pd
 from typing import Dict, List
-from utils.indicators import Indicators
-from utils.logger import logger
+from ..utils.indicators import Indicators
+from ..utils.logger import logger
 
 class MultiTimeframeAnalyzer:
     """

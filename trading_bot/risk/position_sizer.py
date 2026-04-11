@@ -5,8 +5,8 @@ Calculate position sizes based on risk parameters and volatility
 
 import pandas as pd
 from typing import Dict
-from config import Config
-from utils.logger import logger
+from ..config import Config
+from ..utils.logger import logger
 
 class PositionSizer:
     """

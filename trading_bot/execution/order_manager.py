@@ -5,12 +5,12 @@ Manage order lifecycle and execution
 
 from typing import Dict, Optional
 from datetime import datetime
-from execution.exchange_interface import ExchangeInterface
-from risk.risk_manager import RiskManager
-from risk.position_sizer import PositionSizer
-from strategies.base_strategy import Signal
-from utils.logger import logger
-from utils.database import db
+from .exchange_interface import ExchangeInterface
+from ..risk.risk_manager import RiskManager
+from ..risk.position_sizer import PositionSizer
+from ..strategies.base_strategy import Signal
+from ..utils.logger import logger
+from ..utils.database import db
 
 class OrderManager:
     def __init__(self, risk_manager: RiskManager, position_sizer: PositionSizer):

@@ -5,9 +5,9 @@ Enforce risk limits and protect capital
 
 from typing import Dict, List, Optional, Union, Tuple
 from datetime import datetime, date, timedelta
-from config import Config
-from utils.logger import logger
-from utils.database import db
+from ..config import Config
+from ..utils.logger import logger
+from ..utils.database import db
 
 class RiskManager:
     """

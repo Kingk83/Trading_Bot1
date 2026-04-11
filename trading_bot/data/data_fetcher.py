@@ -8,9 +8,9 @@ import ccxt
 import pandas as pd
 from datetime import datetime, timedelta
 from typing import List, Dict, Optional
-from config import Config
-from utils.logger import logger
-from utils.database import db
+from ..config import Config
+from ..utils.logger import logger
+from ..utils.database import db
 
 class DataFetcher:
     def __init__(self):

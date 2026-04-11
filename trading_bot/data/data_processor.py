@@ -6,8 +6,8 @@ Process and prepare market data for strategies
 import pandas as pd
 import numpy as np
 from typing import Dict, List
-from utils.indicators import Indicators
-from utils.logger import logger
+from ..utils.indicators import Indicators
+from ..utils.logger import logger
 
 class DataProcessor:
     @staticmethod

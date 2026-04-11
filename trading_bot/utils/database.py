@@ -7,8 +7,8 @@ import requests
 from supabase import create_client, Client
 from typing import Dict, List, Any, Optional
 from datetime import datetime, date
-from config import Config
-from utils.logger import logger
+from ..config import Config
+from ..utils.logger import logger
 
 
 class DatabaseManager:

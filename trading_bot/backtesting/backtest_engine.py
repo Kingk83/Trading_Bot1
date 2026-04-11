@@ -6,9 +6,9 @@ Historical strategy testing with realistic simulation
 import pandas as pd
 from typing import Dict, List
 from datetime import datetime
-from strategies.base_strategy import BaseStrategy
-from backtesting.performance_metrics import PerformanceMetrics
-from utils.logger import logger
+from ..strategies.base_strategy import BaseStrategy
+from .performance_metrics import PerformanceMetrics
+from ..utils.logger import logger
 
 class BacktestEngine:
     """

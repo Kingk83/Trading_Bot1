@@ -6,8 +6,8 @@ Identify market conditions (trending vs ranging)
 import pandas as pd
 import numpy as np
 from typing import Dict
-from utils.indicators import Indicators
-from utils.logger import logger
+from ..utils.indicators import Indicators
+from ..utils.logger import logger
 
 class RegimeDetector:
     """
