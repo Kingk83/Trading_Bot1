@@ -120,7 +120,9 @@ class TradingBot:
             logger.info(f"{symbol} | Regime: {regime} | Best strategies: {regime_chars['best_strategies']}")
 
             for strategy in self.strategies:
-                if not await self._is_strategy_enabled(strategy.name):
+                enabled = await self._is_strategy_enabled(strategy.name)
+                logger.info(f"Strategy {strategy.name} enabled check: {enabled}")
+                if not enabled:
                     continue
 
                 strategy_type = self.strategy_type_map.get(strategy.name, strategy.name.lower())
